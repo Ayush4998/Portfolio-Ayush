@@ -23,6 +23,15 @@ const projectsData: Project[] = [
   },
   {
     id: 2,
+    title: 'Portfolio Website',
+    description: 'A responsive portfolio website designed to showcase projects and professional experience with modern animations and clean UI.',
+    image: 'https://images.pexels.com/photos/196645/pexels-photo-196645.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+    tags: ['React', 'TailwindCSS', 'Framer Motion'],
+    liveUrl: 'https://portfolio-ayush-phi.vercel.app/',
+    githubUrl: 'https://github.com/Ayush4998/Portfolio-Ayush'
+  },
+  {
+    id: 3,
     title: 'Pneumonia Detection',
     description: 'Designed an AI model for pneumonia detection from chest X-rays using transfer learning, self-attention, and advanced preprocessing, with real-time, cloud-based deployment for scalable clinical use.',
     image: 'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
@@ -31,20 +40,11 @@ const projectsData: Project[] = [
     githubUrl: ''
   },
   {
-    id: 3,
+    id: 4,
     title: 'Air Quality Monitoring and Room Safety Prediction ',
     description: 'Developed a machine learning model to assess indoor room safety using air quality and health data, enhancing environmental awareness and streamlining health evaluations.',
     image: 'https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
     tags: ['Python', 'PowerBI', 'Arduino'],
-    liveUrl: '',
-    githubUrl: ''
-  },
-  {
-    id: 4,
-    title: 'Portfolio Website',
-    description: 'A responsive portfolio website designed to showcase projects and professional experience with modern animations and clean UI.',
-    image: 'https://images.pexels.com/photos/196645/pexels-photo-196645.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
-    tags: ['React', 'TailwindCSS', 'Framer Motion'],
     liveUrl: '',
     githubUrl: ''
   },
