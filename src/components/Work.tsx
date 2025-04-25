@@ -16,7 +16,7 @@ const projectsData: Project[] = [
     id: 1,
     title: 'Ethical Assistant System',
     description: 'Developed an AI-powered web app guiding users through ethical decisions using Utilitarianism, Deontology, and Rights-Based frameworks.',
-    image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+    image: 'https://images.unsplash.com/photo-1684369175833-4b445ad6bfb5?auto=format&fit=crop&w=800&q=80',
     tags: ['Flask', 'JavaScript', 'API'],
     liveUrl: 'https://cheery-elf-419b59.netlify.app/',
     githubUrl: 'https://github.com/Ayush4998/Ethical-decision-assistant'
@@ -25,7 +25,7 @@ const projectsData: Project[] = [
     id: 2,
     title: 'Portfolio Website',
     description: 'A responsive portfolio website designed to showcase projects and professional experience with modern animations and clean UI.',
-    image: 'https://images.pexels.com/photos/196645/pexels-photo-196645.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+    image: 'https://images.unsplash.com/photo-1554497342-902a4f8da8ed?auto=format&fit=crop&w=800&q=80',
     tags: ['React', 'TailwindCSS', 'Framer Motion'],
     liveUrl: 'https://portfolio-ayush-phi.vercel.app/',
     githubUrl: 'https://github.com/Ayush4998/Portfolio-Ayush'
@@ -34,7 +34,7 @@ const projectsData: Project[] = [
     id: 3,
     title: 'Pneumonia Detection',
     description: 'Designed an AI model for pneumonia detection from chest X-rays using transfer learning, self-attention, and advanced preprocessing, with real-time, cloud-based deployment for scalable clinical use.',
-    image: 'https://images.pexels.com/photos/230544/pexels-photo-230544.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+    image: 'https://images.unsplash.com/photo-1584555684040-bad07f46a21f?auto=format&fit=crop&w=800&q=80',
     tags: ['Python', 'TensorFlow', 'Numpy'],
     liveUrl: '',
     githubUrl: ''
@@ -43,7 +43,7 @@ const projectsData: Project[] = [
     id: 4,
     title: 'Air Quality Monitoring and Room Safety Prediction ',
     description: 'Developed a machine learning model to assess indoor room safety using air quality and health data, enhancing environmental awareness and streamlining health evaluations.',
-    image: 'https://images.pexels.com/photos/1118873/pexels-photo-1118873.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+    image: 'https://images.unsplash.com/photo-1575380866722-4898e0e73b6b?auto=format&fit=crop&w=800&q=80',
     tags: ['Python', 'PowerBI', 'Arduino'],
     liveUrl: '',
     githubUrl: ''
@@ -52,7 +52,7 @@ const projectsData: Project[] = [
     id: 5,
     title: 'Smart Attendance System',
     description: 'Built a smart attendance system using Arduino and OpenCV, integrating facial recognition and sensor-based automation to streamline and secure the attendance process.',
-    image: 'https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+    image: 'https://images.unsplash.com/photo-1520697830682-bbb6e85e2b0b?auto=format&fit=crop&w=800&q=80',
     tags: ['OpenCV', 'Arduino UNO'],
     liveUrl: '',
     githubUrl: ''
@@ -61,12 +61,13 @@ const projectsData: Project[] = [
     id: 6,
     title: 'Smart Glasses for the blind',
     description: 'Developed smart glasses for the visually impaired using ultrasonic sensors to detect obstacles and provide real-time tactile feedback for improved navigation and spatial awareness.',
-    image: 'https://images.pexels.com/photos/2325446/pexels-photo-2325446.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940',
+    image: 'https://images.unsplash.com/photo-1632169486919-f8d993a936c4?auto=format&fit=crop&w=800&q=80',
     tags: ['Arduino NANO', 'Ultrasonic Sensor'],
     liveUrl: '',
     githubUrl: ''
   }
 ];
+
 
 const Work: React.FC = () => (
   <section 

@@ -234,7 +234,7 @@ const Contact: React.FC = () => {
                       className={`w-full px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600 transition-colors ${
                         errors.name ? 'border border-red-500' : 'border border-gray-200 dark:border-gray-700'
                       }`}
-                      placeholder="abc xyz"
+                      placeholder="Enter your name."
                     />
                     {errors.name && (
                       <p className="mt-1 text-sm text-red-500">{errors.name}</p>
