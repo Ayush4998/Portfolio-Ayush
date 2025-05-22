@@ -4,8 +4,8 @@ import resume from '../Ayush_resume.pdf';
 import profileImage from '../Profile.jpg';
 
 const typewriterTexts = [
-  'Frontend Developer',
-  'AI/ML Enthusiast',
+  'Full-Stack Developer',
+  'AI/ML Engineer',
   'Data Engineer',
   'Problem Solver',
   'Creative Thinker'
@@ -82,8 +82,7 @@ const Hero: React.FC = () => {
         </div>
         
         <p className="mt-6 max-w-2xl mx-auto text-gray-600 dark:text-gray-300 text-lg">
-          Creating beautiful, functional digital experiences that solve real problems.
-          Passionate about clean code and thoughtful design.
+          Building ML systems to solve real problems and skilled at using AI to supercharge my workflow.
         </p>
         
 
