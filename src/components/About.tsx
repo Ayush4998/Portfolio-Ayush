@@ -9,8 +9,20 @@ import ai from '../ai_job.jpg';
 import gen from '../genai.jpg';
 import web from '../web.jpg';
 import dbms from '../dbms.jpg';
+import mac from '../Machine.jpg';
+import uns from '../uns.jpg';
 
 const certificates = [
+  {
+    title: "Machine Learning Specialization",
+    issuer: "DeepLearning.AI & Stanford University",
+    photo: mac
+  },
+  {
+    title: "Unsupervised Learning, Recommenders, Reinforcement Learning",
+    issuer: "DeepLearning.AI & Stanford University",
+    photo: uns
+  },
   {
     title: "Advanced Learning Algorithms",
     issuer: "DeepLearning.AI & Stanford University",
