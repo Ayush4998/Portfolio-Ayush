@@ -45,8 +45,8 @@ const projectsData: Project[] = [
     description: 'Deployed an AI-powered emotion analysis web application that takes text input and visualizes the emotional composition.',
     image: 'https://images.unsplash.com/photo-1575278220902-cdf1a07a0421?auto=format&fit=crop&w=800&q=80',
     tags: ['Python', 'Typescript', 'Vite'],
-    liveUrl: '',
-    githubUrl: ''
+    liveUrl: 'https://emotion-detector-alpha.vercel.app/',
+    githubUrl: 'https://github.com/Ayush4998/Emotion-detector'
   },
   {
     id: 5,
