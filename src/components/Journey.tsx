@@ -23,6 +23,15 @@ const timelineData: TimelineItem[] = [
   },
   {
     id: 2,
+    year: '2025 June',
+    title: 'Data Analysis Intern',
+    organization: 'SiyaCloud Private Limited',
+    description: 'I was actively involved in analysing sales data, generating actionable insights, and supporting the business intelligence needs of the company. ',
+    icon: <Briefcase size={20} />,
+    category: 'work'
+  },
+  {
+    id: 3,
     year: '2025 March',
     title: 'Semi Finalist',
     organization: 'Build With India - Hackathon',
@@ -31,7 +40,7 @@ const timelineData: TimelineItem[] = [
     category: 'achievement'
   },
   {
-    id: 3,
+    id: 4,
     year: '2025 Feburary - April',
     title: 'Frontend Developer',
     organization: 'Pooja Fasteners',
