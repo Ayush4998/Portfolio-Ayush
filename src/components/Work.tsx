@@ -1,5 +1,11 @@
 import React from 'react';
 import { ExternalLink, Github } from 'lucide-react';
+import image from '../churn.png';
+import img from '../health.png';
+import port from '../portfolio.png';
+import emo from '../emotion.png';
+import eth from '../ethical.jpg';
+import gla from '../glasses.jpg';
 
 interface Project {
   id: number;
@@ -14,54 +20,54 @@ interface Project {
 const projectsData: Project[] = [
   {
     id: 1,
-    title: 'Ethical Assistant System',
-    description: 'Developed an AI-powered web app guiding users through ethical decisions using Utilitarianism, Deontology, and Rights-Based frameworks.',
-    image: 'https://images.unsplash.com/photo-1684369175833-4b445ad6bfb5?auto=format&fit=crop&w=800&q=80',
-    tags: ['Flask', 'JavaScript', 'API'],
-    liveUrl: 'https://cheery-elf-419b59.netlify.app/',
-    githubUrl: 'https://github.com/Ayush4998/Ethical-decision-assistant'
+    title: 'AI-Powered Healthcare Symptom Assessment System',
+    description: 'AI-driven healthcare assistant that analyzes user symptoms via conversational chat to assess possible medical condi-tions and severity.',
+    image: img,
+    tags: ['Gemini API', 'Next.js', 'Typescript'],
+    liveUrl: 'https://healthcare-symptom-checker.vercel.app/',
+    githubUrl: 'https://github.com/Ayush4998/healthcare-symptom-checker'
   },
   {
     id: 2,
+    title: 'Customer Churn Prediction & Retention Dashboard',
+    description: 'An end-to-end machine learning pipeline to predict customer churn, identify key drivers, and recommend retention strate-gies.',
+    image: image,
+    tags: ['Python', 'SHAP', 'XGBoost' ,'Streamlit'],
+    liveUrl: 'https://ayush4998-customer-churn-prediction-app-agw4ce.streamlit.app/',
+    githubUrl: 'https://github.com/Ayush4998/customer-churn-prediction'
+  },
+  {
+    id: 3,
     title: 'Portfolio Website',
     description: 'A responsive portfolio website designed to showcase projects and professional experience with modern animations and clean UI.',
-    image: 'https://images.unsplash.com/photo-1554497342-902a4f8da8ed?auto=format&fit=crop&w=800&q=80',
+    image: port,
     tags: ['React', 'TailwindCSS', 'Framer Motion'],
     liveUrl: 'https://portfolio-ayush-phi.vercel.app/',
     githubUrl: 'https://github.com/Ayush4998/Portfolio-Ayush'
   },
   {
-    id: 3,
-    title: 'Pneumonia Detection',
-    description: 'Designed an AI model for pneumonia detection from chest X-rays using transfer learning, self-attention, and advanced preprocessing, with real-time, cloud-based deployment for scalable clinical use.',
-    image: 'https://images.unsplash.com/photo-1584555684040-bad07f46a21f?auto=format&fit=crop&w=800&q=80',
-    tags: ['Python', 'TensorFlow', 'Numpy'],
-    liveUrl: '',
-    githubUrl: ''
-  },
-  {
     id: 4,
     title: 'Real-time Emotion Detection',
     description: 'Deployed an AI-powered emotion analysis web application that takes text input and visualizes the emotional composition.',
-    image: 'https://images.unsplash.com/photo-1575278220902-cdf1a07a0421?auto=format&fit=crop&w=800&q=80',
+    image: emo,
     tags: ['Python', 'Typescript', 'Vite'],
     liveUrl: 'https://emotion-detector-alpha.vercel.app/',
     githubUrl: 'https://github.com/Ayush4998/Emotion-detector'
   },
   {
     id: 5,
-    title: 'Smart Attendance System',
-    description: 'Built a smart attendance system using Arduino and OpenCV, integrating facial recognition and sensor-based automation to streamline and secure the attendance process.',
-    image: 'https://images.unsplash.com/photo-1520697830682-bbb6e85e2b0b?auto=format&fit=crop&w=800&q=80',
-    tags: ['OpenCV', 'Arduino UNO'],
-    liveUrl: '',
-    githubUrl: ''
+    title: 'Ethical Assistant System',
+    description: 'Developed an AI-powered web app guiding users through ethical decisions using Utilitarianism, Deontology, and Rights-Based frameworks.',
+    image: eth,
+    tags: ['Flask', 'JavaScript', 'API'],
+    liveUrl: 'https://cheery-elf-419b59.netlify.app/',
+    githubUrl: 'https://github.com/Ayush4998/Ethical-decision-assistant'
   },
   {
     id: 6,
     title: 'Smart Glasses for the blind',
     description: 'Developed smart glasses for the visually impaired using ultrasonic sensors to detect obstacles and provide real-time tactile feedback for improved navigation and spatial awareness.',
-    image: 'https://images.unsplash.com/photo-1632169486919-f8d993a936c4?auto=format&fit=crop&w=800&q=80',
+    image: gla,
     tags: ['Arduino NANO', 'Ultrasonic Sensor'],
     liveUrl: '',
     githubUrl: ''

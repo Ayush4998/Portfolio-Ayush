@@ -82,7 +82,6 @@ function App() {
         <About />
         <Work />
         <Journey />
-        <BeyondTech />
         <Contact />
         <Footer />
         <BackToTop />

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Download, ChevronDown } from 'lucide-react';
-import resume from '../Ayush_resume.pdf'; 
+import resume from '../Ayush_Goswami_CV.pdf'; 
 import profileImage from '../Profile.jpg';
 
 const typewriterTexts = [
-  'Full-Stack Developer',
+  'Data Scientist',
   'AI/ML Engineer',
   'Data Engineer',
   'Problem Solver',

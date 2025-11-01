@@ -24,7 +24,7 @@ const interestsData: Interest[] = [
   {
     id: 1,
     title: 'Chess',
-    description: 'Strategic thinking and competitive gameplay.',
+    description: 'With an elo of around 1500 :)',
     icon: <FaChessKnight size={28} />,
     bgColor: 'bg-gray-100 dark:bg-gray-900/30',
     textColor: 'text-gray-600 dark:text-gray-400'
@@ -32,7 +32,7 @@ const interestsData: Interest[] = [
   {
     id: 2,
     title: 'Music',
-    description: 'Playing instruments and discovering new sounds.',
+    description: 'Singing ',
     icon: <FaMusic size={28} />,
     bgColor: 'bg-purple-100 dark:bg-purple-900/30',
     textColor: 'text-purple-600 dark:text-purple-400'
@@ -47,43 +47,11 @@ const interestsData: Interest[] = [
   },
   {
     id: 4,
-    title: 'Movies',
-    description: 'Appreciating storytelling through cinema.',
-    icon: <FaFilm size={28} />,
-    bgColor: 'bg-blue-100 dark:bg-blue-900/30',
-    textColor: 'text-blue-600 dark:text-blue-400'
-  },
-  {
-    id: 5,
-    title: 'Sketching',
-    description: 'Creating art through lines, shading, and ideas.',
-    icon: <FaPencilAlt size={28} />,
-    bgColor: 'bg-pink-100 dark:bg-pink-900/30',
-    textColor: 'text-pink-600 dark:text-pink-400'
-  },
-  {
-    id: 6,
     title: 'Table Tennis',
     description: 'Fast-paced rallies and precision shots.',
     icon: <FaTableTennis size={28} />,
     bgColor: 'bg-red-100 dark:bg-red-900/30',
     textColor: 'text-red-600 dark:text-red-400'
-  },
-  {
-    id: 7,
-    title: 'Gym',
-    description: 'Building strength, endurance, and discipline.',
-    icon: <FaDumbbell size={28} />,
-    bgColor: 'bg-indigo-100 dark:bg-indigo-900/30',
-    textColor: 'text-indigo-600 dark:text-indigo-400'
-  },
-  {
-    id: 8,
-    title: 'Beaches',
-    description: 'Relaxing by the sea and enjoying sunsets.',
-    icon: <FaUmbrellaBeach size={28} />,
-    bgColor: 'bg-teal-100 dark:bg-teal-900/30',
-    textColor: 'text-teal-600 dark:text-teal-400'
   }
 ];
 
@@ -108,26 +76,7 @@ const BeyondTech: React.FC = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {interestsData.map((interest, index) => (
-            <div 
-              key={interest.id}
-              className="flex flex-col items-center text-center p-6 rounded-lg bg-white dark:bg-gray-900 shadow-md hover:shadow-lg transition-all hover:-translate-y-1 duration-300"
-              data-aos="zoom-in"
-              data-aos-delay={100 + (index * 50)}
-            >
-              <div className={`w-16 h-16 rounded-full ${interest.bgColor} ${interest.textColor} flex items-center justify-center mb-4`}>
-                {interest.icon}
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                {interest.title}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
-                {interest.description}
-              </p>
-            </div>
-          ))}
-        </div>
+       
         
         <div 
           className="mt-16 bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden"

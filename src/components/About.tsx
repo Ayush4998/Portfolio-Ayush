@@ -11,12 +11,18 @@ import web from '../web.jpg';
 import dbms from '../dbms.jpg';
 import mac from '../Machine.jpg';
 import uns from '../uns.jpg';
+import genai from '../genai.png';
 
 const certificates = [
   {
     title: "Machine Learning Specialization",
     issuer: "DeepLearning.AI & Stanford University",
     photo: mac
+  },
+  {
+    title: "Generative AI Professional (1Z0-1127-25)",
+    issuer: "Oracle Cloud Infrastructure ",
+    photo: genai
   },
   {
     title: "Unsupervised Learning, Recommenders, Reinforcement Learning",
@@ -112,13 +118,13 @@ const About: React.FC = () => {
               Who I Am
             </h3>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              I’m an aspiring machine learning engineer with a strong grounding in computer science, desiring to create constructive technology that makes a difference. My journey started with a slight attraction to how intelligent systems work. Now it has grown into a profound commitment towards solving real-world problems by using code.
+              I’m a final-year Computer Science student at VIT Chennai who loves turning ideas into things that actually work. What started as a simple curiosity about how systems make decisions turned into a genuine drive to build technology that’s useful, thoughtful, and a little smarter every time.
             </p>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              I like formulating abstract concepts into tangible solutions—whether deploying AI models for healthcare, putting smart systems together with a microcontroller platform, or creating scalable applications from the ground up. I treat each project with curiosity and care, looking to bring the end-user an effortless experience.
+              I enjoy working across the stack: designing data pipelines, training ML models, or putting everything together into clean, functional apps. I care as much about how something feels to use as how well it performs. Whether it’s building a healthcare chatbot, automating a process, or creating a small tool that makes someone’s work easier, I try to keep one goal: make it simple, make it matter.
             </p>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              I value creativity, a healthy balance, and continuous learning beyond the screen. I really think that engineering is equally about good design and empathy with clean code. Every project I undertake looks to not just build but also uplift, simplify, and add value.
+              Outside of code, I value clarity, creativity, and learning from how things actually work in the real world. For me, engineering isn’t just about building instead it’s about understanding, improving, and adding something meaningful to the system around you.
             </p>
 
             <div className="flex flex-wrap gap-3">

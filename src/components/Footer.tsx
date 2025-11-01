@@ -50,9 +50,6 @@ const Footer: React.FC = () => {
             &copy; {currentYear} Ayush Goswami. All rights reserved.
           </p>
           
-          <p className="text-gray-400 text-sm flex items-center">
-            Made with <Heart size={14} className="text-red-500 mx-1" /> using React & TailwindCSS
-          </p>
         </div>
       </div>
     </footer>

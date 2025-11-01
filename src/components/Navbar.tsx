@@ -7,7 +7,6 @@ const navLinks = [
   { title: 'About Me', href: '#about' },
   { title: 'My Work', href: '#work' },
   { title: 'My Journey', href: '#journey' },
-  { title: 'Beyond Tech', href: '#beyond' },
   { title: 'Contact', href: '#contact' },
 ];
 
