@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
-import { Calendar, Briefcase, GraduationCap, Award, Code, Database, Server, TestTube, Zap, Eye, ExternalLink, ChevronLeft, ChevronRight, X, CheckCircle, Terminal, Layers, GitBranch, HardDrive, Monitor, Cpu, Network, Activity } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Briefcase, GraduationCap, Award, Code, Server, TestTube, Eye, ExternalLink, X, Terminal, Layers, GitBranch, Cpu, Activity } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface TimelineItem {
   id: number;
@@ -15,7 +19,6 @@ interface TimelineItem {
 
 const frinksDetailContent = (
   <div className="space-y-8">
-    {/* Header */}
     <div className="flex items-start gap-4 pb-6 border-b border-gray-200 dark:border-gray-700">
       <div className="flex-1">
         <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Software Development Engineer 1 — Frinks.ai</h3>
@@ -26,7 +29,6 @@ const frinksDetailContent = (
       </div>
     </div>
 
-    {/* Sections */}
     <DetailSection
       title="Product & Frontend Development"
       icon={Layers}
@@ -188,7 +190,6 @@ const frinksDetailContent = (
       ]}
     />
 
-    {/* Tech Stack Summary */}
     <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
       <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
         <Cpu size={18} className="text-indigo-600 dark:text-indigo-400" />
@@ -223,26 +224,26 @@ interface DetailSectionProps {
 function DetailSection({ title, icon: Icon, iconColor, items }: DetailSectionProps) {
   return (
     <div>
-    <h4 className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white mb-4">
-      <Icon size={20} className={iconColor} />
-      {title}
-    </h4>
-    <div className="space-y-4 ml-6 border-l-2 border-gray-200 dark:border-gray-700 pl-4">
-      {items.map((item, index) => (
-        <div key={index} className="group relative">
-          <div className="absolute left-[-10px] top-2 w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600 group-hover:bg-indigo-500 dark:group-hover:bg-indigo-500 transition-colors"></div>
-          <h5 className="font-medium text-gray-900 dark:text-white mb-1">{item.title}</h5>
-          <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{item.desc}</p>
-          <div className="flex flex-wrap gap-1.5">
-            {item.tags.map((tag, i) => (
-              <span key={i} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs rounded border border-gray-200 dark:border-gray-700">
-                {tag}
-              </span>
-            ))}
+      <h4 className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <Icon size={20} className={iconColor} />
+        {title}
+      </h4>
+      <div className="space-y-4 ml-6 border-l-2 border-gray-200 dark:border-gray-700 pl-4">
+        {items.map((item, index) => (
+          <div key={index} className="group relative">
+            <div className="absolute left-[-10px] top-2 w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600 group-hover:bg-indigo-500 dark:group-hover:bg-indigo-500 transition-colors"></div>
+            <h5 className="font-medium text-gray-900 dark:text-white mb-1">{item.title}</h5>
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{item.desc}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {item.tags.map((tag, i) => (
+                <span key={i} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs rounded border border-gray-200 dark:border-gray-700">
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -299,34 +300,80 @@ const timelineData: TimelineItem[] = [
 
 const Journey: React.FC = () => {
   const [openDetail, setOpenDetail] = useState<TimelineItem | null>(null);
+  const timelineRef = useRef<HTMLSectionElement>(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const items = itemsRef.current.filter(Boolean) as HTMLDivElement[];
+      
+      gsap.from(items, {
+        scrollTrigger: {
+          trigger: timelineRef.current,
+          start: 'top 80%',
+          end: 'bottom 20%',
+          toggleActions: 'play none none reverse',
+        },
+        y: 50,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.15,
+        ease: 'power3.out',
+      });
+
+      gsap.from('.timeline-line', {
+        scrollTrigger: {
+          trigger: timelineRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+        scaleY: 0,
+        transformOrigin: 'top center',
+        duration: 1,
+        ease: 'power3.out',
+      });
+
+      gsap.from('.timeline-dot', {
+        scrollTrigger: {
+          trigger: timelineRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+        scale: 0,
+        duration: 0.5,
+        stagger: 0.15,
+        ease: 'back.out(1.7)',
+      });
+    }, timelineRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <>
       <section 
+        ref={timelineRef}
         id="journey" 
-        className="py-20 bg-white dark:bg-gray-900"
+        className="py-16 sm:py-20 lg:py-24 bg-white dark:bg-gray-900"
       >
-        <div className="container mx-auto px-4 max-w-5xl">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
           <div 
-            className="text-center mb-16"
+            className="text-center mb-12 sm:mb-16"
             data-aos="fade-up"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
               My Journey
             </h2>
-            <div className="w-20 h-1 bg-indigo-600 mx-auto mb-6"></div>
-            <p className="text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
+            <div className="w-20 h-1 bg-gradient-to-r from-indigo-600 to-blue-600 mx-auto mb-6 rounded-full"></div>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">
               The path that has shaped my skills and expertise. A timeline of professional growth and learning.
             </p>
           </div>
           
-          {/* Timeline */}
           <div className="relative">
-            {/* Timeline Connector Line */}
-            <div className="absolute left-0 md:left-1/2 top-0 h-full w-px bg-indigo-200 dark:bg-indigo-900 transform md:translate-x-[-0.5px]"></div>
+            <div className="hidden md:block absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-indigo-200 via-indigo-400 to-indigo-200 dark:from-indigo-900 dark:via-indigo-600 dark:to-indigo-900 transform translate-x-[-50%] timeline-line"></div>
             
-            {/* Timeline Items */}
-            <div className="space-y-12">
+            <div className="space-y-10 sm:space-y-12">
               {timelineData.map((item, index) => (
                 <div 
                   key={item.id} 
@@ -335,19 +382,18 @@ const Journey: React.FC = () => {
                   data-aos-delay={100 + (index * 50)}
                   data-aos-duration="800"
                 >
-                  {/* Timeline Dot */}
-                  <div className="absolute left-0 md:left-1/2 top-6 w-6 h-6 rounded-full bg-indigo-600 transform md:translate-x-[-50%] shadow-md flex items-center justify-center z-10">
-                    <div className="w-3 h-3 rounded-full bg-white"></div>
+                  <div className="hidden md:block absolute left-1/2 top-6 w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 transform translate-x-[-50%] shadow-lg timeline-dot flex items-center justify-center z-10">
+                    <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
                   </div>
                   
-                  {/* Timeline Content */}
                   <div className={`md:w-1/2 pl-10 md:pl-0 ${index % 2 === 0 ? 'md:pl-12' : 'md:pr-12'}`}>
                     <div 
-                      className={`p-6 bg-white dark:bg-gray-900 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 ${item.isClickable ? 'cursor-pointer ring-2 ring-indigo-500/20' : ''}`}
+                      ref={(el) => { itemsRef.current[index] = el; }}
+                      className={`relative p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 ${item.isClickable ? 'cursor-pointer ring-2 ring-indigo-500/20 hover:ring-indigo-500/40' : ''}`}
                       onClick={() => item.isClickable && setOpenDetail(item)}
                     >
-                      <div className="flex items-center mb-4">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${item.category === 'work' 
+                      <div className="absolute -left-12 md:left-auto md:right-full md:-right-12 w-10 h-10 rounded-full flex items-center justify-center md:mr-4" style={{ top: '1.5rem' }}>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.category === 'work' 
                           ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
                           : item.category === 'education'
                             ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
@@ -355,23 +401,32 @@ const Journey: React.FC = () => {
                         }`}>
                           {item.icon}
                         </div>
-                        <span className="text-sm font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 py-1 px-3 rounded-full">
-                          {item.year}
-                        </span>
                       </div>
                       
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                      <div className="flex items-center md:justify-between mb-4">
+                        <span className="text-sm font-medium bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 py-1.5 px-3 rounded-full">
+                          {item.year}
+                        </span>
+                        {item.isClickable && (
+                          <div className="md:hidden mt-2 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 text-sm font-medium">
+                            <ExternalLink size={16} />
+                            <span>View details</span>
+                          </div>
+                        )}
+                      </div>
+                      
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-1">
                         {item.title}
                       </h3>
                       <p className="text-indigo-600 dark:text-indigo-400 font-medium mb-3">
                         {item.organization}
                       </p>
-                      <p className="text-gray-600 dark:text-gray-300">
+                      <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">
                         {item.description}
                       </p>
                       
                       {item.isClickable && (
-                        <div className="mt-4 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 text-sm font-medium">
+                        <div className="mt-4 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 text-sm font-medium hidden md:flex">
                           <ExternalLink size={16} />
                           <span>View details →</span>
                         </div>
@@ -385,7 +440,6 @@ const Journey: React.FC = () => {
         </div>
       </section>
 
-      {/* Detail Modal */}
       {openDetail && (
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
@@ -395,10 +449,9 @@ const Journey: React.FC = () => {
           aria-labelledby="detail-title"
         >
           <div 
-            className="bg-white dark:bg-gray-950 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl"
+            className="bg-white dark:bg-gray-950 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl animate-modal-in"
             onClick={e => e.stopPropagation()}
           >
-            {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800 sticky top-0 bg-white/95 dark:bg-gray-950/95 backdrop-blur rounded-t-2xl z-10">
               <div className="flex items-center gap-4">
                 <button
@@ -425,16 +478,14 @@ const Journey: React.FC = () => {
               </div>
             </div>
 
-            {/* Modal Content - Scrollable */}
             <div className="flex-1 overflow-y-auto p-6 pr-8">
               {openDetail.detailContent}
             </div>
 
-            {/* Modal Footer */}
             <div className="flex items-center justify-end gap-3 p-4 border-t border-gray-200 dark:border-gray-800 sticky bottom-0 bg-white/95 dark:bg-gray-950/95 backdrop-blur rounded-b-2xl">
               <button
                 onClick={() => setOpenDetail(null)}
-                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl transition-colors"
+                className="btn-primary"
               >
                 Close
               </button>

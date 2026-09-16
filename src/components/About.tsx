@@ -66,7 +66,6 @@ const certificates = [
   }
 ];
 
-
 const About: React.FC = () => {
   const skills = [
     { 
@@ -94,50 +93,48 @@ const About: React.FC = () => {
   return (
     <section 
       id="about" 
-      className="py-20 bg-white dark:bg-gray-900"
+      className="py-16 sm:py-20 lg:py-24 bg-white dark:bg-gray-900"
     >
-      <div 
-        className="container mx-auto px-4 max-w-5xl"
-        data-aos="fade-up"
-        data-aos-delay="100"
-      >
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+        <div className="text-center mb-12 sm:mb-16" data-aos="fade-up" data-aos-delay="100">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             About Me
           </h2>
-          <div className="w-20 h-1 bg-indigo-600 mx-auto"></div>
+          <div className="w-20 h-1 bg-gradient-to-r from-indigo-600 to-blue-600 mx-auto rounded-full"></div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
           <div 
-            className="order-2 md:order-1"
+            className="order-2 lg:order-1"
             data-aos="fade-right"
             data-aos-delay="200"
           >
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-5">
               Who I Am
             </h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              I’m a final-year Computer Science student at VIT Chennai who loves turning ideas into things that actually work. What started as a simple curiosity about how systems make decisions turned into a genuine drive to build technology that’s useful, thoughtful, and a little smarter every time.
-            </p>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              I enjoy working across the stack: designing data pipelines, training ML models, or putting everything together into clean, functional apps. I care as much about how something feels to use as how well it performs. Whether it’s building a healthcare chatbot, automating a process, or creating a small tool that makes someone’s work easier, I try to keep one goal: make it simple, make it matter.
-            </p>
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Outside of code, I value clarity, creativity, and learning from how things actually work in the real world. For me, engineering isn’t just about building instead it’s about understanding, improving, and adding something meaningful to the system around you.
-            </p>
+            <div className="space-y-4 text-gray-600 dark:text-gray-300 leading-relaxed">
+              <p>
+                I&apos;m a final-year Computer Science student at VIT Chennai who loves turning ideas into things that actually work. What started as a simple curiosity about how systems make decisions turned into a genuine drive to build technology that&apos;s useful, thoughtful, and a little smarter every time.
+              </p>
+              <p>
+                I enjoy working across the stack: designing data pipelines, training ML models, or putting everything together into clean, functional apps. I care as much about how something feels to use as how well it performs. Whether it&apos;s building a healthcare chatbot, automating a process, or creating a small tool that makes someone&apos;s work easier, I try to keep one goal: make it simple, make it matter.
+              </p>
+              <p>
+                Outside of code, I value clarity, creativity, and learning from how things actually work in the real world. For me, engineering isn&apos;t just about building instead it&apos;s about understanding, improving, and adding something meaningful to the system around you.
+              </p>
+            </div>
 
-            <div className="flex flex-wrap gap-3">
-              <span className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 text-sm font-medium">Machine Learning</span>
-              <span className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 text-sm font-medium">Artificial Intelligence</span>
-              <span className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 text-sm font-medium">Data Science</span>
-              <span className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 text-sm font-medium">Full-Stack Development</span>
-              <span className="px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 text-sm font-medium">Java Develpoer</span>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <span className="tag">Machine Learning</span>
+              <span className="tag">Artificial Intelligence</span>
+              <span className="tag">Data Science</span>
+              <span className="tag">Full-Stack Development</span>
+              <span className="tag">Java Developer</span>
             </div>
           </div>
-          {/* Carousel of Certificates */}
-          <div className="order-1 md:order-2 flex justify-center" data-aos="fade-left" data-aos-delay="200">
-            <div className="w-full max-w-md">
+          
+          <div className="order-1 lg:order-2" data-aos="fade-left" data-aos-delay="200">
+            <div className="card overflow-hidden">
               <Carousel
                 showArrows={true}
                 showThumbs={false}
@@ -145,22 +142,29 @@ const About: React.FC = () => {
                 infiniteLoop={true}
                 autoPlay={true}
                 interval={4000}
-                className="rounded-lg shadow-lg bg-white dark:bg-gray-800"
+                className="rounded-none"
               >
                 {certificates.map((cert, idx) => (
-                  <div key={idx} className="p-8 flex flex-col items-center">
-                    <img 
-                      src={cert.photo}
-                      alt={cert.title}
-                      className="mb-4 h-48 w-auto object-contain rounded shadow"
-                    />
-                    <div className="text-indigo-600 dark:text-indigo-400 font-bold text-lg mb-2">
+                  <div key={idx} className="p-6 sm:p-8 flex flex-col items-center">
+                    <div className="relative mb-5 w-full max-w-xs">
+                      <img 
+                        src={cert.photo}
+                        alt={cert.title}
+                        className="w-full h-auto object-contain rounded-lg shadow-lg"
+                      />
+                      <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center shadow-lg">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="text-indigo-600 dark:text-indigo-400 font-semibold text-sm uppercase tracking-wider mb-2">
                       Certificate
                     </div>
-                    <div className="text-xl font-semibold text-gray-900 dark:text-white text-center mb-1">
+                    <div className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white text-center mb-1">
                       {cert.title}
                     </div>
-                    <div className="text-gray-600 dark:text-gray-300 text-center">
+                    <div className="text-gray-600 dark:text-gray-300 text-center text-sm">
                       {cert.issuer}
                     </div>
                   </div>
@@ -168,22 +172,24 @@ const About: React.FC = () => {
               </Carousel>
             </div>
           </div>
-
         </div>
         
         <div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-14"
           data-aos="fade-up"
           data-aos-delay="300"
         >
           {skills.map((skill, index) => (
             <div 
               key={index} 
-              className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-md transition-transform hover:translate-y-[-8px]"
+              className="card card-hover p-6 sm:p-7 group"
+              style={{ transitionDelay: `${index * 100}ms` }}
             >
-              <div className="mb-4">{skill.icon}</div>
+              <div className="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                {skill.icon}
+              </div>
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{skill.title}</h4>
-              <p className="text-gray-600 dark:text-gray-300">{skill.description}</p>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{skill.description}</p>
             </div>
           ))}
         </div>
@@ -193,4 +199,3 @@ const About: React.FC = () => {
 };
 
 export default About;
-

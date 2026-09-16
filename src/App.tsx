@@ -9,62 +9,73 @@ import BeyondTech from './components/BeyondTech';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
-import { useScrollReveal } from './utils/useScrollReveal';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 function App() {
-  // Initialize scroll reveal effect
-  useScrollReveal('[data-aos]', {
-    reset: false,
-    cleanup: true
-  });
-
-  // Add custom styles for animations to the document
+  // Refresh ScrollTrigger on mount and resize
   useEffect(() => {
-    // Add CSS for animations
+    ScrollTrigger.refresh();
+    
+    const handleResize = () => {
+      ScrollTrigger.refresh();
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Add global animation styles
+  useEffect(() => {
     const style = document.createElement('style');
     style.innerHTML = `
-      /* Base AOS animation classes */
-      [data-aos] {
-        opacity: 0;
-        transition-property: opacity, transform;
-        transition-duration: 800ms;
-        transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1.0);
+      /* Modal animation */
+      @keyframes modal-in {
+        from {
+          opacity: 0;
+          transform: scale(0.95) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
       }
       
-      [data-aos].aos-animate {
-        opacity: 1;
-        transform: translateX(0) translateY(0) scale(1);
+      .animate-modal-in {
+        animation: modal-in 0.3s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
       }
       
-      /* Specific animations */
-      [data-aos="fade-up"] {
-        transform: translateY(30px);
+      /* Slide down animation for mobile menu */
+      @keyframes slide-down {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
       
-      [data-aos="fade-down"] {
-        transform: translateY(-30px);
+      .animate-slide-down {
+        animation: slide-down 0.2s ease-out forwards;
       }
       
-      [data-aos="fade-right"] {
-        transform: translateX(-30px);
+      /* Smooth scroll for anchor links */
+      html {
+        scroll-behavior: smooth;
       }
       
-      [data-aos="fade-left"] {
-        transform: translateX(30px);
-      }
-      
-      [data-aos="zoom-in"] {
-        transform: scale(0.9);
-      }
-      
-      /* Typewriter cursor animation */
-      @keyframes blink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0; }
-      }
-      
-      .animate-blink {
-        animation: blink 1s step-end infinite;
+      /* Reduced motion support */
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
       }
     `;
     document.head.appendChild(style);
@@ -78,11 +89,14 @@ function App() {
     <ThemeProvider>
       <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white relative">
         <Navbar />
-        <Hero />
-        <About />
-        <Work />
-        <Journey />
-        <Contact />
+        <main>
+          <Hero />
+          <About />
+          <Work />
+          <Journey />
+          <BeyondTech />
+          <Contact />
+        </main>
         <Footer />
         <BackToTop />
       </div>
