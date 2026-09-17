@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Download, ChevronDown } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import resume from '../Ayush_Goswami_CV.pdf'; 
+import resume from '../AyushGoswamiResume.pdf'; 
 import profileImage from '../Profile.jpg';
 
 gsap.registerPlugin(ScrollTrigger);

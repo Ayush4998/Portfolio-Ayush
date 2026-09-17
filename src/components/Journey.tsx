@@ -1,499 +1,432 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Briefcase, GraduationCap, Award, Code, Server, TestTube, Eye, ExternalLink, X, Terminal, Layers, GitBranch, Cpu, Activity } from 'lucide-react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { Layers, Server, TestTube, Activity, Eye, Terminal } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface TimelineItem {
-  id: number;
+// ---------------------------------------------------------------------------
+// Current role, modeled as "modules" — mirrors the way FrinksEdge itself
+// organizes work (configurable modules, variants, instances) rather than a
+// generic list of bullet points.
+// ---------------------------------------------------------------------------
+
+type ModuleKey = 'product' | 'release' | 'testing' | 'health' | 'vision' | 'ai';
+
+interface ModuleItem {
+  title: string;
+  desc: string;
+  tags: string[];
+}
+
+interface Accent {
+  tint: string;
+  text: string;
+  border: string;
+  dot: string;
+}
+
+interface Module {
+  key: ModuleKey;
+  label: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  accent: Accent;
+  items: ModuleItem[];
+}
+
+const MODULES: Module[] = [
+  {
+    key: 'product',
+    label: 'Product & frontend',
+    icon: Layers,
+    accent: {
+      tint: 'bg-[#EAF3F4] dark:bg-[#132226]',
+      text: 'text-[#2C6470] dark:text-[#8FD0D9]',
+      border: 'border-[#3E7C8C]',
+      dot: 'bg-[#3E7C8C]',
+    },
+    items: [
+      {
+        title: 'Responsive landing page',
+        desc: 'Built a responsive landing page with media queries for different screen sizes.',
+        tags: ['React', 'Media queries'],
+      },
+      {
+        title: 'Edit-module configuration refactor',
+        desc: 'Refactored the Edit Module Configuration system from roughly 4,000 lines to 600, separating module-specific configuration handling into maintainable components.',
+        tags: ['TypeScript', 'Refactoring'],
+      },
+      {
+        title: 'Analyzed image configuration',
+        desc: 'Worked on post-deployment visual configuration of inferred images.',
+        tags: ['React', 'Computer vision'],
+      },
+      {
+        title: 'Thresholds & ground-truth values',
+        desc: 'Worked on module configuration involving thresholds and GT values across different variants and instances.',
+        tags: ['Variants', 'Instances'],
+      },
+      {
+        title: 'End-to-end API development',
+        desc: 'Built and integrated 1–2 APIs end-to-end, from frontend interactions through the Node.js backend to database persistence.',
+        tags: ['Node.js', 'Database'],
+      },
+    ],
+  },
+  {
+    key: 'release',
+    label: 'Release engineering',
+    icon: Server,
+    accent: {
+      tint: 'bg-[#FBF1E3] dark:bg-[#241C10]',
+      text: 'text-[#8A5A1E] dark:text-[#E7B36B]',
+      border: 'border-[#C6822E]',
+      dot: 'bg-[#C6822E]',
+    },
+    items: [
+      {
+        title: 'Linux to Windows, via WSL2',
+        desc: 'Worked on migrating the existing Linux-based product installation system to Windows using WSL2, evaluating Docker Desktop and adopting the WSL2-based approach.',
+        tags: ['WSL2', 'Docker'],
+      },
+      {
+        title: 'Version validation & deployment variants',
+        desc: 'Worked with version validation, deployment variants, Node/Python runtime images, deployment scripts, and release artifacts.',
+        tags: ['Versioning', 'Runtime images'],
+      },
+      {
+        title: 'Release distribution pipeline',
+        desc: 'Worked on the release distribution flow: packaging releases as ZIP artifacts, storing them in S3, and making them available through the Release Manager/installer page.',
+        tags: ['S3'],
+      },
+      {
+        title: 'Feature-branch & release drift',
+        desc: 'Built Feature Branch Drift and Release Drift functionality to identify differences between branches and releases, giving visibility into the current state of production code.',
+        tags: ['Git'],
+      },
+      {
+        title: 'Cross-environment debugging',
+        desc: 'Worked across Linux and Windows/WSL2 environments and remotely debugged deployed plants using AnyDesk, Docker, and PM2.',
+        tags: ['AnyDesk', 'PM2'],
+      },
+    ],
+  },
+  {
+    key: 'testing',
+    label: 'Testing & TDD',
+    icon: TestTube,
+    accent: {
+      tint: 'bg-[#EBF4EC] dark:bg-[#141F17]',
+      text: 'text-[#356B41] dark:text-[#8FCE9C]',
+      border: 'border-[#4E8B5C]',
+      dot: 'bg-[#4E8B5C]',
+    },
+    items: [
+      {
+        title: 'Behavior-first TDD',
+        desc: 'Worked on behavior-first TDD across roughly two repositories, with broader testing work spanning the product\u2019s repositories. Identified frontend-called endpoints and defined expected behavior before inspecting the underlying implementation.',
+        tags: ['Jest', 'Vitest'],
+      },
+      {
+        title: 'Reducing implementation bias',
+        desc: 'Designed test cases independently of implementation logic, using existing behavior only where clarification was needed, then added the missing edge cases and failure scenarios.',
+        tags: ['Edge cases'],
+      },
+      {
+        title: 'Suite organization',
+        desc: 'Implemented and organized the resulting test suites within their respective repositories.',
+        tags: [],
+      },
+    ],
+  },
+  {
+    key: 'health',
+    label: 'Health monitoring',
+    icon: Activity,
+    accent: {
+      tint: 'bg-[#F8EBEA] dark:bg-[#251413]',
+      text: 'text-[#9C3F38] dark:text-[#E7938C]',
+      border: 'border-[#B85049]',
+      dot: 'bg-[#B85049]',
+    },
+    items: [
+      {
+        title: 'Health monitor',
+        desc: 'Worked on health monitor functionality covering the health, connectivity, and status of containers, Python components, scripts, PLCs, MariaDB, RabbitMQ, and other system dependencies.',
+        tags: ['Docker', 'PLC', 'RabbitMQ'],
+      },
+      {
+        title: 'PLC read & trigger log visibility',
+        desc: 'Worked on PLC read and trigger log visibility in the frontend, including dummy data for testing and validation.',
+        tags: ['PLC', 'Logging'],
+      },
+      {
+        title: 'Remote plant debugging',
+        desc: 'Debugged deployed plants remotely using AnyDesk, investigating services and running Docker/PM2 commands to diagnose issues.',
+        tags: ['AnyDesk', 'PM2'],
+      },
+    ],
+  },
+  {
+    key: 'vision',
+    label: 'Industrial AI & vision',
+    icon: Eye,
+    accent: {
+      tint: 'bg-[#F1EDF6] dark:bg-[#1C1625]',
+      text: 'text-[#5F4A82] dark:text-[#BBA4DA]',
+      border: 'border-[#7C63A3]',
+      dot: 'bg-[#7C63A3]',
+    },
+    items: [
+      {
+        title: 'Module ecosystem',
+        desc: "Developed working knowledge of the platform's industrial AI/vision modules: inferencing, image classification, object detection, OCR, search area, color detection, dimensioning, segmentation, and bead inspection.",
+        tags: ['9 modules'],
+      },
+      {
+        title: 'Configuration & model interaction',
+        desc: 'Gained an understanding of how module configurations, trained models, variants, instances, and inference results interact within the overall product.',
+        tags: [],
+      },
+    ],
+  },
+  {
+    key: 'ai',
+    label: 'AI-assisted engineering',
+    icon: Terminal,
+    accent: {
+      tint: 'bg-[#EEF1F2] dark:bg-[#171B1D]',
+      text: 'text-[#3E4C55] dark:text-[#A9B8C0]',
+      border: 'border-[#5B6B79]',
+      dot: 'bg-[#5B6B79]',
+    },
+    items: [
+      {
+        title: 'AI as an engineering collaborator',
+        desc: 'Used AI for repo exploration, architecture analysis, implementation, debugging, and review, while keeping ownership of the code.',
+        tags: ['Code review'],
+      },
+      {
+        title: 'Selective AI in TDD',
+        desc: 'Used AI for scaffolding and boilerplate but kept test-case design independent, so tests never just mirror the implementation.',
+        tags: ['Test integrity'],
+      },
+    ],
+  },
+];
+
+const STATS: { value: string; label: string }[] = [
+  { value: '4,000 → 600', label: 'Lines in the config module refactor' },
+  { value: '9', label: 'Vision modules worked across' },
+  { value: '1–2', label: 'APIs built end-to-end' },
+];
+
+const TECH_STACK = [
+  'React', 'Node.js', 'TypeScript', 'Python', 'MariaDB', 'RabbitMQ',
+  'Docker', 'WSL2', 'S3', 'PLC', 'Reddis', 'Git', 'CI/CD', 'PM2', 'AnyDesk',
+];
+
+// ---------------------------------------------------------------------------
+// Everything before the current role — a quiet, chronological log rather
+// than another set of cards competing for attention.
+// ---------------------------------------------------------------------------
+
+interface LogEntry {
   year: string;
   title: string;
-  organization: string;
-  description: string;
-  icon: React.ReactNode;
-  category: 'work' | 'education' | 'achievement';
-  isClickable?: boolean;
-  detailContent?: React.ReactNode;
+  org: string;
+  desc: string;
 }
 
-const frinksDetailContent = (
-  <div className="space-y-8">
-    <div className="flex items-start gap-4 pb-6 border-b border-gray-200 dark:border-gray-700">
-      <div className="flex-1">
-        <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Software Development Engineer 1 — Frinks.ai</h3>
-        <p className="text-indigo-600 dark:text-indigo-400 font-medium mt-1">Mar 2025 – Present • Bangalore, India (Hybrid)</p>
-        <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm">
-          First 6 months: Full-stack product engineering across frontend, backend APIs, testing, deployment, release engineering, system monitoring, and industrial AI/vision systems.
-        </p>
-      </div>
-    </div>
-
-    <DetailSection
-      title="Product & Frontend Development"
-      icon={Layers}
-      iconColor="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
-      items={[
-        {
-          title: "Responsive Landing Page",
-          desc: "Built a responsive landing page with media queries for different screen sizes, ensuring consistent UX across desktop, tablet, and mobile viewports.",
-          tags: ["React", "CSS", "Media Queries", "Responsive Design"]
-        },
-        {
-          title: "Edit Module Configuration Refactor",
-          desc: "Refactored the Edit Module Configuration system from ~4,000 lines of complex code to ~600 lines (85% reduction), separating module-specific configuration handling into maintainable, type-safe components with schema-driven validation.",
-          tags: ["TypeScript", "Refactoring", "Architecture", "Schema Validation", "85% LOC Reduction"]
-        },
-        {
-          title: "Analyzed Image Configuration",
-          desc: "Implemented post-deployment visual configuration of inferred images, enabling operators to adjust detection parameters on analyzed frames without code changes or redeployment.",
-          tags: ["React", "Computer Vision", "Configuration", "Real-time Updates"]
-        },
-        {
-          title: "Module Configuration (Thresholds & GT Values)",
-          desc: "Built configuration management for thresholds and ground-truth values across different variants and instances, supporting variant-specific parameterization for industrial vision modules.",
-          tags: ["Configuration", "Variants", "Instances", "Thresholds", "Ground Truth"]
-        },
-        {
-          title: "End-to-End API Development",
-          desc: "Built and integrated 1–2 APIs end-to-end from frontend interactions through the Node.js backend to MariaDB persistence, including request validation, error handling, pagination, and OpenAPI documentation.",
-          tags: ["React", "Node.js", "MariaDB", "OpenAPI", "Validation"]
-        }
-      ]}
-    />
-
-    <DetailSection
-      title="Release, Deployment & Cross-Platform Engineering"
-      icon={Server}
-      iconColor="bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
-      items={[
-        {
-          title: "Linux-to-Windows Migration via WSL2",
-          desc: "Led migration of the Linux-based product installation system to Windows using WSL2, evaluating Docker Desktop vs. WSL2 approach; resolved filesystem performance bottlenecks, path resolution issues, and container networking differences to achieve parity across dev/test/prod environments.",
-          tags: ["WSL2", "Docker", "Linux", "Windows", "DevOps", "Migration"]
-        },
-        {
-          title: "Version Validation & Deployment Variants",
-          desc: "Implemented semantic version validation, variant-aware artifact generation, Node/Python runtime image management, and deployment scripts for consistent, reproducible releases across environments.",
-          tags: ["Versioning", "Variants", "Docker", "Runtime Images", "Scripts"]
-        },
-        {
-          title: "Release Distribution Flow (S3 + Release Manager)",
-          desc: "Designed the release distribution pipeline: packaging releases as ZIP artifacts, storing in S3 with checksum verification, and surfacing them through the Release Manager/installer page for controlled rollouts.",
-          tags: ["S3", "Release Engineering", "Checksums", "Installer", "Distribution"]
-        },
-        {
-          title: "Cross-Environment Debugging",
-          desc: "Debugged deployed plants remotely across Linux and Windows/WSL2 environments using AnyDesk, Docker, and PM2 to diagnose service issues, inspect logs, and validate fixes in production.",
-          tags: ["AnyDesk", "Docker", "PM2", "Remote Debugging", "Production"]
-        }
-      ]}
-    />
-
-    <DetailSection
-      title="Release Management"
-      icon={GitBranch}
-      iconColor="bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
-      items={[
-        {
-          title: "Feature Branch Drift Detection",
-          desc: "Built automated drift detection comparing feature branches against mainline, surfacing configuration and code divergences early in CI/CD to prevent integration surprises.",
-          tags: ["Git", "CI/CD", "Automation", "Branch Protection"]
-        },
-        {
-          title: "Release Drift Detection",
-          desc: "Implemented release artifact drift detection comparing deployed releases against source, providing visibility into the current state of production code and catching unauthorized or accidental changes.",
-          tags: ["Release Engineering", "Audit", "Compliance", "Production Monitoring"]
-        }
-      ]}
-    />
-
-    <DetailSection
-      title="Testing & TDD"
-      icon={TestTube}
-      iconColor="bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
-      items={[
-        {
-          title: "Behavior-First TDD Across Repositories",
-          desc: "Established behavior-first TDD practices across ~2 primary repositories (with broader testing work spanning the product's repositories), identifying frontend-called endpoints and defining expected behavior before inspecting implementation.",
-          tags: ["TDD", "Jest", "Vitest", "Behavior-Driven", "Test Strategy"]
-        },
-        {
-          title: "Implementation-Bias Reduction",
-          desc: "Designed test cases independently of implementation logic to reduce implementation-biased testing; used existing behavior only for clarification, then added missing edge cases and failure scenarios.",
-          tags: ["Test Design", "Edge Cases", "Failure Scenarios", "Bias Reduction"]
-        },
-        {
-          title: "Test Suite Organization",
-          desc: "Implemented and organized resulting test suites within respective repositories with clear structure, naming conventions, and >90% coverage on critical paths, enabling confident refactoring.",
-          tags: ["Test Organization", "Coverage", "Refactoring Safety", "Maintainability"]
-        }
-      ]}
-    />
-
-    <DetailSection
-      title="Health Monitoring & Industrial Systems"
-      icon={Activity}
-      iconColor="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400"
-      items={[
-        {
-          title: "Unified Health Monitor",
-          desc: "Built comprehensive health monitoring covering containers, Python components, shell scripts, PLCs, MariaDB, RabbitMQ, and other system dependencies with circuit-breaker patterns and automated alerting for 99.9% uptime SLA.",
-          tags: ["Monitoring", "Docker", "Python", "PLC", "MariaDB", "RabbitMQ", "Circuit Breaker"]
-        },
-        {
-          title: "PLC Read & Trigger Log Visibility",
-          desc: "Developed frontend visibility for PLC read operations and trigger logs, including dummy data generation for testing and validation of industrial communication pathways.",
-          tags: ["PLC", "Industrial IoT", "Frontend", "Logging", "Testing"]
-        },
-        {
-          title: "Remote Plant Debugging",
-          desc: "Debugged deployed plants remotely using AnyDesk, investigating services and running Docker/PM2 commands to diagnose issues, restart services, and validate fixes in production environments.",
-          tags: ["AnyDesk", "Docker", "PM2", "Production Debugging", "Incident Response"]
-        }
-      ]}
-    />
-
-    <DetailSection
-      title="Industrial AI / Computer Vision"
-      icon={Eye}
-      iconColor="bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
-      items={[
-        {
-          title: "Module Ecosystem Mastery",
-          desc: "Developed working knowledge of the company's industrial AI/vision modules: Inferencing, IC (Image Classification), ODC (Object Detection), OCR, Search Area, Color Detection, Dimensioning, Segmentation, and Bead Inspection.",
-          tags: ["Computer Vision", "Inferencing", "Classification", "Detection", "OCR", "Segmentation"]
-        },
-        {
-          title: "Configuration & Model Interaction",
-          desc: "Gained deep understanding of how module configurations, trained models, variants, instances, and inference results interact within the overall product architecture for configurable vision pipelines.",
-          tags: ["Architecture", "Models", "Variants", "Instances", "Inference Pipeline"]
-        }
-      ]}
-    />
-
-    <DetailSection
-      title="AI-Assisted Engineering"
-      icon={Terminal}
-      iconColor="bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400"
-      items={[
-        {
-          title: "AI as Engineering Collaborator",
-          desc: "Integrated AI as an engineering collaborator for repository exploration, architecture analysis, implementation, testing, debugging, and code review—moving beyond code completion to accelerate end-to-end delivery while maintaining code ownership.",
-          tags: ["AI-Assisted Dev", "Architecture", "Code Review", "Debugging", "Productivity"]
-        },
-        {
-          title: "Selective AI in TDD",
-          desc: "Used AI selectively during TDD for scaffolding and boilerplate while maintaining independent test-case design to avoid reproducing implementation logic in tests, preserving the integrity of behavior-first approach.",
-          tags: ["TDD", "AI Ethics", "Test Integrity", "Human-in-the-loop"]
-        }
-      ]}
-    />
-
-    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-      <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-        <Cpu size={18} className="text-indigo-600 dark:text-indigo-400" />
-        Tech Stack
-      </h4>
-      <div className="flex flex-wrap gap-2">
-        {[
-          "React", "Node.js", "TypeScript", "Python", "MariaDB", "RabbitMQ",
-          "Docker", "WSL2", "S3", "PLC", "Jest", "Vitest", "Git", "CI/CD",
-          "PM2", "AnyDesk", "OpenAPI", "Linux", "Windows"
-        ].map((tech) => (
-          <span key={tech} className="px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 text-sm rounded-full border border-indigo-100 dark:border-indigo-800">
-            {tech}
-          </span>
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
-interface DetailSectionProps {
-  title: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  iconColor: string;
-  items: Array<{
-    title: string;
-    desc: string;
-    tags: string[];
-  }>;
-}
-
-function DetailSection({ title, icon: Icon, iconColor, items }: DetailSectionProps) {
-  return (
-    <div>
-      <h4 className="flex items-center gap-2 text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        <Icon size={20} className={iconColor} />
-        {title}
-      </h4>
-      <div className="space-y-4 ml-6 border-l-2 border-gray-200 dark:border-gray-700 pl-4">
-        {items.map((item, index) => (
-          <div key={index} className="group relative">
-            <div className="absolute left-[-10px] top-2 w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600 group-hover:bg-indigo-500 dark:group-hover:bg-indigo-500 transition-colors"></div>
-            <h5 className="font-medium text-gray-900 dark:text-white mb-1">{item.title}</h5>
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">{item.desc}</p>
-            <div className="flex flex-wrap gap-1.5">
-              {item.tags.map((tag, i) => (
-                <span key={i} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs rounded border border-gray-200 dark:border-gray-700">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-const timelineData: TimelineItem[] = [
+const LOG_ITEMS: LogEntry[] = [
   {
-    id: 1,
-    year: '2025 Mar – Present',
-    title: 'Software Development Engineer 1',
-    organization: 'Frinks.ai',
-    description: 'First full-time role. Full-stack product engineering across frontend, backend APIs, testing, deployment, release engineering, system monitoring, and industrial AI/vision systems. Click to view detailed breakdown.',
-    icon: <Code size={20} />,
-    category: 'work',
-    isClickable: true,
-    detailContent: frinksDetailContent
-  },
-  {
-    id: 2,
-    year: '2022 – 2026',
-    title: "Bachelor's Degree, Computer Science",
-    organization: 'Vellore Institute Of Technology',
-    description: 'Built a strong foundation in computer science while actively applying concepts through hands-on projects and practical work. Graduated with focus on software engineering, algorithms, and systems.',
-    icon: <GraduationCap size={20} />,
-    category: 'education'
-  },
-  {
-    id: 3,
-    year: '2025 June – Aug',
+    year: 'Jun – Aug 2025',
     title: 'Data Analysis Intern',
-    organization: 'SiyaCloud Private Limited',
-    description: 'Analysed sales data, generated actionable insights, and supported business intelligence needs. Worked with data visualization, statistical analysis, and reporting dashboards.',
-    icon: <Briefcase size={20} />,
-    category: 'work'
+    org: 'SiyaCloud Private Limited',
+    desc: 'Analyzed sales data and built reporting dashboards to support business intelligence and decision-making.',
   },
   {
-    id: 4,
-    year: '2025 Mar',
-    title: 'Semi Finalist',
-    organization: 'Build With India — Hackathon',
-    description: 'Placed among top 80 teams out of 25,000+ across India with innovative idea and realistic deployment plans. Recognized for technical approach and product thinking.',
-    icon: <Award size={20} />,
-    category: 'achievement'
+    year: 'Mar 2025',
+    title: 'Semi-finalist',
+    org: 'Build With India, national hackathon',
+    desc: 'Placed among the top 80 teams out of 25,000+ nationwide, recognized for technical approach and product thinking.',
   },
   {
-    id: 5,
-    year: '2025 Feb – Apr',
+    year: 'Feb – Apr 2025',
     title: 'Frontend Developer',
-    organization: 'Pooja Fasteners',
-    description: 'Built the landing page for Pooja Fasteners, enhancing the company&apos;s online presence. Collaborated with stakeholders to gather requirements and refine website functionalities.',
-    icon: <Briefcase size={20} />,
-    category: 'work'
-  }
+    org: 'Pooja Fasteners',
+    desc: "Built the company's landing page and worked with stakeholders to shape site requirements and functionality.",
+  },
+  {
+    year: '2022 – 2026',
+    title: 'B.Tech, Computer Science',
+    org: 'Vellore Institute of Technology',
+    desc: 'Coursework in software engineering, algorithms, and systems, applied through hands-on projects alongside internships and hackathons.',
+  },
 ];
 
 const Journey: React.FC = () => {
-  const [openDetail, setOpenDetail] = useState<TimelineItem | null>(null);
-  const timelineRef = useRef<HTMLSectionElement>(null);
-  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeModule, setActiveModule] = useState<ModuleKey>('product');
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const items = itemsRef.current.filter(Boolean) as HTMLDivElement[];
-      
-      gsap.from(items, {
+      gsap.set('.journey-reveal', { opacity: 1, y: 0 });
+      gsap.from('.journey-reveal', {
         scrollTrigger: {
-          trigger: timelineRef.current,
-          start: 'top 80%',
-          end: 'bottom 20%',
+          trigger: sectionRef.current,
+          start: 'top 75%',
           toggleActions: 'play none none reverse',
         },
-        y: 50,
+        y: 24,
         opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'power3.out',
+        duration: 0.7,
+        stagger: 0.08,
+        ease: 'power2.out',
+        immediateRender: false,
       });
-
-      gsap.from('.timeline-line', {
-        scrollTrigger: {
-          trigger: timelineRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        scaleY: 0,
-        transformOrigin: 'top center',
-        duration: 1,
-        ease: 'power3.out',
-      });
-
-      gsap.from('.timeline-dot', {
-        scrollTrigger: {
-          trigger: timelineRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none reverse',
-        },
-        scale: 0,
-        duration: 0.5,
-        stagger: 0.15,
-        ease: 'back.out(1.7)',
-      });
-    }, timelineRef);
+    }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
+  const module = useMemo(() => MODULES.find((m) => m.key === activeModule)!, [activeModule]);
+
   return (
-    <>
-      <section 
-        ref={timelineRef}
-        id="journey" 
-        className="py-16 sm:py-20 lg:py-24 bg-white dark:bg-gray-900"
-      >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
-          <div 
-            className="text-center mb-12 sm:mb-16"
-            data-aos="fade-up"
-          >
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              My Journey
-            </h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-indigo-600 to-blue-600 mx-auto mb-6 rounded-full"></div>
-            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">
-              The path that has shaped my skills and expertise. A timeline of professional growth and learning.
-            </p>
-          </div>
-          
-          <div className="relative">
-            <div className="hidden md:block absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-indigo-200 via-indigo-400 to-indigo-200 dark:from-indigo-900 dark:via-indigo-600 dark:to-indigo-900 transform translate-x-[-50%] timeline-line"></div>
-            
-            <div className="space-y-10 sm:space-y-12">
-              {timelineData.map((item, index) => (
-                <div 
-                  key={item.id} 
-                  className={`relative flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
-                  data-aos={index % 2 === 0 ? "fade-left" : "fade-right"}
-                  data-aos-delay={100 + (index * 50)}
-                  data-aos-duration="800"
-                >
-                  <div className="hidden md:block absolute left-1/2 top-6 w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 transform translate-x-[-50%] shadow-lg timeline-dot flex items-center justify-center z-10">
-                    <div className="w-2.5 h-2.5 rounded-full bg-white"></div>
-                  </div>
-                  
-                  <div className={`md:w-1/2 pl-10 md:pl-0 ${index % 2 === 0 ? 'md:pl-12' : 'md:pr-12'}`}>
-                    <div 
-                      ref={(el) => { itemsRef.current[index] = el; }}
-                      className={`relative p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 ${item.isClickable ? 'cursor-pointer ring-2 ring-indigo-500/20 hover:ring-indigo-500/40' : ''}`}
-                      onClick={() => item.isClickable && setOpenDetail(item)}
+    <section
+      ref={sectionRef}
+      id="journey"
+      className="py-16 sm:py-20 lg:py-24 bg-white dark:bg-gray-950"
+    >
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+        {/* Header */}
+        <div className="journey-reveal mb-12 sm:mb-14 max-w-2xl">
+          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-gray-900 dark:text-white">
+            My journey
+          </h2>
+          <p className="mt-3 text-gray-600 dark:text-gray-400 leading-relaxed">
+            A year and a half building inside an industrial vision product, and how I got there.
+          </p>
+        </div>
+
+        {/* Current role — dashboard panel, no click required to see anything */}
+        <div className="journey-reveal rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden mb-14">
+          <div className="grid lg:grid-cols-[280px_1fr]">
+            {/* Identity + stat readouts */}
+            <div className="p-6 sm:p-7 bg-gray-50 dark:bg-gray-900/60 lg:border-r border-gray-200 dark:border-gray-800">
+              <p className="text-sm text-gray-500 dark:text-gray-500">Mar 2025 — Present</p>
+              <h3 className="mt-1 text-xl font-semibold text-gray-900 dark:text-white">
+                Software Development Engineer 1
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">Frinks.ai</p>
+              <p className="text-sm text-gray-500 dark:text-gray-500">Bangalore, India (hybrid)</p>
+
+              <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                During my first six months at Frinks.ai, I worked across <b>product development, backend systems, testing, deployment, release management, system monitoring, and industrial AI</b>. My work spanned multiple layers of the product, from frontend and APIs to infrastructure, deployment workflows, and AI-powered inspection systems.
+              </p>
+            </div>
+
+            {/* Module selector + active module content */}
+            <div className="p-6 sm:p-7">
+              <div
+                role="tablist"
+                aria-label="Areas of work"
+                className="flex flex-wrap gap-1.5"
+              >
+                {MODULES.map((m) => {
+                  const active = m.key === activeModule;
+                  return (
+                    <button
+                      key={m.key}
+                      type="button"
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => setActiveModule(m.key)}
+                      className={`shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-400 dark:focus-visible:ring-offset-gray-950 ${
+                        active
+                          ? `${m.accent.tint} ${m.accent.text} border-transparent font-medium`
+                          : 'border-gray-200 dark:border-gray-800 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                      }`}
                     >
-                      <div className="absolute -left-12 md:left-auto md:right-full md:-right-12 w-10 h-10 rounded-full flex items-center justify-center md:mr-4" style={{ top: '1.5rem' }}>
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.category === 'work' 
-                          ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
-                          : item.category === 'education'
-                            ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
-                            : 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
-                        }`}>
-                          {item.icon}
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center md:justify-between mb-4">
-                        <span className="text-sm font-medium bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 py-1.5 px-3 rounded-full">
-                          {item.year}
+                      <span className={`w-1.5 h-1.5 rounded-full ${m.accent.dot}`} />
+                      {m.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div key={module.key} role="tabpanel" className="journey-fade mt-5 grid sm:grid-cols-2 gap-x-6 gap-y-5">
+                {module.items.map((item) => (
+                  <div key={item.title} className={`border-l-2 pl-4 py-0.5 ${module.accent.border}`}>
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-white">
+                      {item.title}
+                    </h4>
+                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                      {item.desc}
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {item.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className={`text-xs px-2 py-0.5 rounded ${module.accent.tint} ${module.accent.text}`}
+                        >
+                          {tag}
                         </span>
-                        {item.isClickable && (
-                          <div className="md:hidden mt-2 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 text-sm font-medium">
-                            <ExternalLink size={16} />
-                            <span>View details</span>
-                          </div>
-                        )}
-                      </div>
-                      
-                      <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-1">
-                        {item.title}
-                      </h3>
-                      <p className="text-indigo-600 dark:text-indigo-400 font-medium mb-3">
-                        {item.organization}
-                      </p>
-                      <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed">
-                        {item.description}
-                      </p>
-                      
-                      {item.isClickable && (
-                        <div className="mt-4 flex items-center gap-2 text-indigo-600 dark:text-indigo-400 text-sm font-medium hidden md:flex">
-                          <ExternalLink size={16} />
-                          <span>View details →</span>
-                        </div>
-                      )}
+                      ))}
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {openDetail && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-          onClick={() => setOpenDetail(null)}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="detail-title"
-        >
-          <div 
-            className="bg-white dark:bg-gray-950 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl animate-modal-in"
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800 sticky top-0 bg-white/95 dark:bg-gray-950/95 backdrop-blur rounded-t-2xl z-10">
-              <div className="flex items-center gap-4">
-                <button
-                  onClick={() => setOpenDetail(null)}
-                  className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  aria-label="Close detail view"
-                >
-                  <X size={20} className="text-gray-600 dark:text-gray-300" />
-                </button>
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 flex items-center justify-center flex-shrink-0">
-                  <Code size={22} className="text-white" />
-                </div>
-                <div>
-                  <h3 id="detail-title" className="text-xl font-bold text-gray-900 dark:text-white">
-                    {openDetail.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">{openDetail.organization}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:block">
-                  {openDetail.year}
+          {/* Stack strip */}
+          <div className="border-t border-gray-200 dark:border-gray-800 px-6 sm:px-7 py-3 flex flex-wrap gap-x-4 gap-y-1.5 bg-gray-50/60 dark:bg-gray-900/30">
+            {TECH_STACK.map((tech) => (
+              <span key={tech} className="font-mono text-xs text-gray-500 dark:text-gray-500">
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Everything before it — quiet, chronological, no cards */}
+        <div className="journey-reveal">
+          <h3 className="text-sm font-medium text-gray-500 dark:text-gray-500 mb-5">
+            Before that
+          </h3>
+          <ol className="space-y-7">
+            {LOG_ITEMS.map((entry) => (
+              <li key={entry.title} className="flex flex-col sm:flex-row sm:gap-6">
+                <span className="font-mono text-xs text-gray-500 dark:text-gray-500 sm:w-28 sm:pt-0.5 shrink-0">
+                  {entry.year}
                 </span>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-6 pr-8">
-              {openDetail.detailContent}
-            </div>
-
-            <div className="flex items-center justify-end gap-3 p-4 border-t border-gray-200 dark:border-gray-800 sticky bottom-0 bg-white/95 dark:bg-gray-950/95 backdrop-blur rounded-b-2xl">
-              <button
-                onClick={() => setOpenDetail(null)}
-                className="btn-primary"
-              >
-                Close
-              </button>
-            </div>
-          </div>
+                <div>
+                  <h4 className="text-base font-medium text-gray-900 dark:text-white">
+                    {entry.title}
+                  </h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{entry.org}</p>
+                  <p className="mt-1.5 text-sm text-gray-600 dark:text-gray-400 max-w-xl leading-relaxed">
+                    {entry.desc}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
-      )}
-    </>
+      </div>
+
+      <style>{`
+        .journey-fade { animation: journeyFade 0.35s ease; }
+        @keyframes journeyFade {
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .journey-fade { animation: none; }
+        }
+      `}</style>
+    </section>
   );
 };
 

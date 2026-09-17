@@ -1,7 +1,6 @@
-import React from 'react';
-import { Code, PenTool, Brain, Lightbulb } from 'lucide-react';
-import { Carousel } from 'react-responsive-carousel';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import sup from '../supervised.jpg';
 import ALA from '../adv_algo.jpg';
 import sw from '../sw_job.jpg';
@@ -12,6 +11,8 @@ import dbms from '../dbms.jpg';
 import mac from '../Machine.jpg';
 import uns from '../uns.jpg';
 import genai from '../genai.png';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const certificates = [
   {
@@ -67,35 +68,99 @@ const certificates = [
 ];
 
 const About: React.FC = () => {
-  const skills = [
-    { 
-      icon: <Code className="text-blue-500" size={24} />, 
-      title: 'Development', 
-      description: 'Expert in modern frontend frameworks with a focus on performance and accessibility.'
-    },
-    { 
-      icon: <PenTool className="text-purple-500" size={24} />, 
-      title: 'Design', 
-      description: 'Keen eye for aesthetics and user experience, creating intuitive interfaces.'
-    },
-    { 
-      icon: <Brain className="text-green-500" size={24} />, 
-      title: 'Problem Solving', 
-      description: 'Analytical approach to challenges with creative, efficient solutions.'
-    },
-    { 
-      icon: <Lightbulb className="text-yellow-500" size={24} />, 
-      title: 'Innovation', 
-      description: 'Always exploring new technologies and approaches to stay ahead of the curve.'
-    }
-  ];
+  // Credential wall: pin the gallery and scrub the row horizontally as the
+  // page scrolls, so browsing certificates is tied to the same scroll the
+  // visitor is already doing rather than a separate autoplay/arrow control.
+  const galleryRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const certificateRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const mm = gsap.matchMedia();
+
+      // Only pin/scrub on larger screens where there's room for it, and only
+      // when the visitor hasn't asked for reduced motion. Below that, and
+      // for reduced-motion users, it's a plain swipeable row — no GSAP.
+      mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+        const track = trackRef.current;
+        const wrap = galleryRef.current;
+        if (!track || !wrap) return;
+
+        const getDistance = () => Math.max(0, track.scrollWidth - wrap.clientWidth);
+
+        // Focus follows the card nearest the middle of the viewport. Running
+        // this as the scrubbed tween renders keeps it accurate in both scroll
+        // directions without keeping any extra direction state.
+        const updateCertificateFocus = () => {
+          const viewportCenter = window.innerWidth / 2;
+          let focusedIndex = 0;
+          let closestDistance = Number.POSITIVE_INFINITY;
+
+          certificateRefs.current.forEach((card, index) => {
+            if (!card) return;
+            const bounds = card.getBoundingClientRect();
+            const distance = Math.abs(bounds.left + bounds.width / 2 - viewportCenter);
+            if (distance < closestDistance) {
+              closestDistance = distance;
+              focusedIndex = index;
+            }
+          });
+
+          certificateRefs.current.forEach((card, index) => {
+            if (!card) return;
+            const isFocused = index === focusedIndex;
+            gsap.set(card, {
+              scale: isFocused ? 1.08 : 0.96,
+              filter: isFocused ? 'blur(0px)' : 'blur(3px)',
+              opacity: isFocused ? 1 : 0.58,
+              zIndex: isFocused ? 2 : 1,
+            });
+          });
+        };
+
+        updateCertificateFocus();
+
+        const tween = gsap.to(track, {
+          x: () => -getDistance(),
+          ease: 'none',
+          onUpdate: updateCertificateFocus,
+          scrollTrigger: {
+            trigger: wrap,
+            start: 'top top',
+            end: () => `+=${getDistance()}`,
+            scrub: 0.5,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              if (progressRef.current) {
+                progressRef.current.style.width = `${self.progress * 100}%`;
+              }
+            },
+            onRefresh: updateCertificateFocus,
+          },
+        });
+
+        return () => {
+          tween.scrollTrigger?.kill();
+          tween.kill();
+        };
+      });
+
+      return () => mm.revert();
+    }, galleryRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section 
       id="about" 
-      className="py-16 sm:py-20 lg:py-24 bg-white dark:bg-gray-900"
+      className="bg-white dark:bg-gray-900"
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl min-h-screen flex flex-col justify-center py-16 sm:py-20 lg:py-24">
         <div className="text-center mb-12 sm:mb-16" data-aos="fade-up" data-aos-delay="100">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             About Me
@@ -103,10 +168,10 @@ const About: React.FC = () => {
           <div className="w-20 h-1 bg-gradient-to-r from-indigo-600 to-blue-600 mx-auto rounded-full"></div>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+        <div className="max-w-3xl mx-auto">
           <div 
-            className="order-2 lg:order-1"
-            data-aos="fade-right"
+            className="text-center"
+            data-aos="fade-up"
             data-aos-delay="200"
           >
             <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-5">
@@ -124,7 +189,7 @@ const About: React.FC = () => {
               </p>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
               <span className="tag">Machine Learning</span>
               <span className="tag">Artificial Intelligence</span>
               <span className="tag">Data Science</span>
@@ -132,66 +197,64 @@ const About: React.FC = () => {
               <span className="tag">Java Developer</span>
             </div>
           </div>
-          
-          <div className="order-1 lg:order-2" data-aos="fade-left" data-aos-delay="200">
-            <div className="card overflow-hidden">
-              <Carousel
-                showArrows={true}
-                showThumbs={false}
-                showStatus={false}
-                infiniteLoop={true}
-                autoPlay={true}
-                interval={4000}
-                className="rounded-none"
+        </div>
+      </div>
+
+      {/* This full-width stage pins only after the About copy has scrolled by. */}
+      <div
+        ref={galleryRef}
+        className="relative h-screen min-h-[560px] flex flex-col justify-center overflow-hidden"
+      >
+        <div className="px-4 sm:px-6 lg:px-8 mb-5 text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-indigo-600 dark:text-indigo-400">
+            Certifications
+          </p>
+          <h3 className="mt-2 text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+            Learning in motion
+          </h3>
+        </div>
+
+        <div className="mx-auto mb-5 h-px w-[min(90vw,64rem)] bg-gray-200 dark:bg-gray-800 relative overflow-hidden hidden lg:block">
+          <div
+            ref={progressRef}
+            className="absolute inset-y-0 left-0 bg-indigo-500 dark:bg-indigo-400"
+            style={{ width: '0%' }}
+          />
+        </div>
+
+        <div className="w-full overflow-x-auto lg:overflow-visible py-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div
+            ref={trackRef}
+            className="flex w-max gap-6 lg:gap-10 px-[calc(50vw-150px)] sm:px-[calc(50vw-190px)] lg:px-[calc(50vw-230px)] snap-x snap-mandatory lg:snap-none"
+          >
+            {certificates.map((cert, idx) => (
+              <div
+                key={cert.title}
+                ref={(element) => { certificateRefs.current[idx] = element; }}
+                className="shrink-0 w-[300px] sm:w-[380px] lg:w-[460px] snap-center origin-center will-change-transform transition-[filter,opacity] duration-300 lg:transition-none"
               >
-                {certificates.map((cert, idx) => (
-                  <div key={idx} className="p-6 sm:p-8 flex flex-col items-center">
-                    <div className="relative mb-5 w-full max-w-xs">
-                      <img 
+                <div style={{ transform: `rotate(${idx % 2 === 0 ? '-0.6deg' : '0.6deg'})` }}>
+                  <div className="p-3 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 rounded-sm shadow-sm">
+                    <div className="aspect-[4/3] bg-white dark:bg-gray-900 flex items-center justify-center overflow-hidden">
+                      <img
                         src={cert.photo}
                         alt={cert.title}
-                        className="w-full h-auto object-contain rounded-lg shadow-lg"
+                        className="max-w-full max-h-full object-contain"
                       />
-                      <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center shadow-lg">
-                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                    </div>
-                    <div className="text-indigo-600 dark:text-indigo-400 font-semibold text-sm uppercase tracking-wider mb-2">
-                      Certificate
-                    </div>
-                    <div className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white text-center mb-1">
-                      {cert.title}
-                    </div>
-                    <div className="text-gray-600 dark:text-gray-300 text-center text-sm">
-                      {cert.issuer}
                     </div>
                   </div>
-                ))}
-              </Carousel>
-            </div>
-          </div>
-        </div>
-        
-        <div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-14"
-          data-aos="fade-up"
-          data-aos-delay="300"
-        >
-          {skills.map((skill, index) => (
-            <div 
-              key={index} 
-              className="card card-hover p-6 sm:p-7 group"
-              style={{ transitionDelay: `${index * 100}ms` }}
-            >
-              <div className="w-12 h-12 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                {skill.icon}
+                  <div className="mt-3 text-center px-1">
+                    <p className="text-sm font-medium text-gray-900 dark:text-white leading-snug">
+                      {cert.title}
+                    </p>
+                    <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-500">
+                      {cert.issuer}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{skill.title}</h4>
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{skill.description}</p>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -92,9 +92,9 @@ function App() {
         <main>
           <Hero />
           <About />
-          <Work />
           <Journey />
-          <BeyondTech />
+          <Work />
+          {/* <BeyondTech /> */}
           <Contact />
         </main>
         <Footer />
